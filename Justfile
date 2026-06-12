@@ -99,14 +99,16 @@ lint-spelling *args:
     cspell --config .cspell.jsonc --no-summary --no-progress --no-must-find-files --exclude COMMIT_AGENTMSG {{ if args == "" { "." } else { args } }}
 
 # Lint prose in Markdown via vale (test fixtures trip rules on purpose).
+# Findings render through the agent template committed in this repo's
+# StylesPath, so fixes never need a second context-gathering pass.
 lint-prose *args:
-    vale --glob='!{LICENSE,CHANGELOG.md,test-*.md,styles/*,tmp/*,.claude/worktrees/*,COMMIT_AGENTMSG}' {{ if args == "" { "." } else { args } }}
+    vale --output=proofhouse-agent.tmpl --glob='!{LICENSE,CHANGELOG.md,test-*.md,styles/*,tmp/*,.claude/worktrees/*,COMMIT_AGENTMSG}' {{ if args == "" { "." } else { args } }}
 
 # Lint each rule file's own `message:` field with the prose styles, so
 # the package's diagnostics don't contain the patterns they flag. Uses the
 # RuleMessage View (styles/config/views/RuleMessage.yml) to select the field.
 lint-messages:
-    vale --config=.vale-messages.ini styles/proofhouse
+    vale --config=.vale-messages.ini --output=proofhouse-agent.tmpl styles/proofhouse
 
 # Lint GitHub Actions workflows via actionlint (SHA-pinned Docker image).
 lint-workflows:

@@ -38,6 +38,8 @@ repos:
       - id: vale
         types_or: [markdown]
         exclude: ^(CHANGELOG\.md|test-.*\.md)$
+        # Render findings through the agent template, matching `just lint-prose`.
+        args: [--output=proofhouse-agent.tmpl]
 
   - repo: https://github.com/rvben/rumdl-pre-commit
     rev: 6a851ca55fe258291f7e2a70da0279f0f98dc636  # frozen: v0.2.9
