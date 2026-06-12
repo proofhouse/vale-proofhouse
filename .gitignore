@@ -1,0 +1,40 @@
+# Local development
+tmp/
+.env
+.env.*
+!.env.example
+mise.local.toml
+
+# Agent commit-message draft. Authored at the repo root so vale's
+# [formats] mapping resolves it, linted via `just lint-commit-msg`,
+# then consumed with `git commit -F COMMIT_AGENTMSG`. Never committed.
+COMMIT_AGENTMSG
+
+# Linter caches
+.rumdl_cache/
+node_modules/
+.cspell-cache
+
+# Claude Code
+.claude/worktrees/
+.claude/settings.local.json
+
+# Vale synced packages (keep vocabulary and project styles).
+# Each negation needs the parent un-ignored first — git can't re-include
+# a child whose ancestor directory stays excluded.
+styles/*
+!styles/proofhouse/
+!styles/config/
+styles/config/*
+!styles/config/templates/
+!styles/config/views/
+!styles/config/vocabularies/
+styles/config/vocabularies/*
+!styles/config/vocabularies/vale-proofhouse/
+
+# Package build artifacts
+pkg/
+proofhouse.zip
+
+# macOS
+.DS_Store
