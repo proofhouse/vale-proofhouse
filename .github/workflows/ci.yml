@@ -43,6 +43,10 @@ jobs:
       - name: Set up just
         uses: proofhouse/github-actions/.github/actions/setup-just@c55eeb3115d95f6b8777538b4d6f49d48830e199 # v0.2.0
 
+      # The runner image ships Homebrew but leaves its prefix off PATH.
+      - name: Put Homebrew on the PATH
+        run: echo "/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin" >> "$GITHUB_PATH"
+
       - name: Install Homebrew dependencies
         run: brew bundle install
 
@@ -68,6 +72,10 @@ jobs:
 
       - name: Set up just
         uses: proofhouse/github-actions/.github/actions/setup-just@c55eeb3115d95f6b8777538b4d6f49d48830e199 # v0.2.0
+
+      # The runner image ships Homebrew but leaves its prefix off PATH.
+      - name: Put Homebrew on the PATH
+        run: echo "/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin" >> "$GITHUB_PATH"
 
       - name: Install Homebrew dependencies
         run: brew bundle install

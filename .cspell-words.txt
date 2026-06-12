@@ -5,6 +5,7 @@ commitlint
 dasel
 EDITMSG
 hardwrap
+linuxbrew
 mktemp
 orbstack
 osxkeychain
