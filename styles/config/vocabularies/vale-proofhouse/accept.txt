@@ -24,5 +24,6 @@ repo
 [Rr]uleset
 rumdl
 [Tt]oolchain
+[Vv]alidator[s]?
 [Ww]orktrees?
 yamllint

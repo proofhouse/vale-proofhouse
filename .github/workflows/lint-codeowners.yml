@@ -1,0 +1,29 @@
+---
+# PR gate that validates `.github/CODEOWNERS` before a broken rule lands on
+# main, where it would quietly route reviews to the wrong owners. The check
+# self-tests: it validates the CODEOWNERS file that arrives in this very PR.
+#
+# Delegates to the org-shared reusable workflow in proofhouse/github-actions,
+# which runs both checks against the caller's checked-out tree: owners and
+# syntax via GitHub's `codeowners/errors` endpoint, and rule-path existence
+# via a local tree walk. The reusable workflow reads the caller's context
+# (`GITHUB_REPOSITORY`, the PR head SHA) and owns its concurrency group, so
+# this caller stays thin. Pinned by commit SHA; the trailing tag comment
+# marks the matching release for Renovate.
+name: lint-codeowners
+
+on:
+  pull_request:
+    paths:
+      - .github/CODEOWNERS
+      - '**'
+
+permissions:
+  contents: read
+
+jobs:
+  lint-codeowners:
+    permissions:
+      contents: read
+    # yamllint disable-line rule:line-length
+    uses: proofhouse/github-actions/.github/workflows/lint-codeowners.yml@c55eeb3115d95f6b8777538b4d6f49d48830e199 # v0.2.0
