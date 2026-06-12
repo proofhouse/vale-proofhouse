@@ -2,6 +2,7 @@ AGENTMSG
 autostash
 cocogitto
 commitlint
+dasel
 EDITMSG
 hardwrap
 mktemp
