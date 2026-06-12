@@ -2,6 +2,7 @@
 [Cc][Ii]
 [Cc]onfig
 [Cc]spell
+gomodscan
 Justfile
 [Pp]rek
 [Pp]roofhouse
@@ -9,4 +10,5 @@ proselint
 [Rr]ebase
 repo
 [Rr]uleset
+rumdl
 [Ww]orktrees?
