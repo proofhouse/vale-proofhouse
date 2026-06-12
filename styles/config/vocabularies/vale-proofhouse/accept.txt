@@ -3,9 +3,11 @@
 Brewfile
 [Cc][Ii]
 [Cc]ocogitto
+CodeQL
 [Cc]ommitlint
 [Cc]ommitter
 [Cc]onfig
+[Cc]ron
 [Cc]spell
 [Dd]asel
 [Gg]itignored?
