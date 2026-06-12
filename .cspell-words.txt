@@ -1,5 +1,9 @@
 AGENTMSG
+autostash
 cocogitto
+commitlint
+EDITMSG
+hardwrap
 mktemp
 orbstack
 osxkeychain
@@ -10,4 +14,7 @@ rhysd
 rumdl
 shellcheck
 tbhb
+Tricolon
+worktree
 worktrees
+yamllintignore

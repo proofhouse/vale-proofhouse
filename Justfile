@@ -50,8 +50,8 @@ default: lint test
 
 # --- Setup ---
 
-# Set up the dev environment and refresh Vale styles.
-setup: install-brew install-tools
+# Set up the dev environment, refresh Vale styles, and install git hooks.
+setup: install-brew install-tools prek-install
 
 # Install Homebrew dependencies from Brewfile.
 install-brew:
@@ -144,6 +144,18 @@ check-all: check gitleaks
 # Sync Vale styles and dictionaries.
 vale-sync:
     vale sync
+
+# Run pre-commit hooks on changed files.
+prek:
+    prek
+
+# Run pre-commit hooks on every file in the tree.
+prek-all:
+    prek run --all-files
+
+# Install the project's git hooks (commit-msg, pre-commit, pre-push).
+prek-install:
+    prek install -t commit-msg -t pre-commit -t pre-push
 
 # Generate CHANGELOG.md from Conventional Commit history. Lint the file
 # in place so the CHANGELOG.md per-file-ignores in .rumdl.toml apply

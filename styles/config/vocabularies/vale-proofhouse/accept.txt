@@ -16,6 +16,7 @@ Justfile
 [Pp]roofhouse
 proselint
 [Rr]ebase
+[Rr]enovate
 repo
 [Rr]uleset
 rumdl
