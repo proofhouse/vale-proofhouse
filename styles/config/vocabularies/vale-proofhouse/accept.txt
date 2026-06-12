@@ -1,10 +1,13 @@
 [Aa]llowlist
+Brewfile
 [Cc][Ii]
 [Cc]ocogitto
 [Cc]ommitlint
 [Cc]ommitter
 [Cc]onfig
 [Cc]spell
+[Gg]itignored?
+[Gg]itleaks
 gomodscan
 Justfile
 [Pp]rek

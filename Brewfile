@@ -1,0 +1,8 @@
+brew "biome"
+brew "cocogitto"
+brew "cspell"
+brew "just"
+brew "prek"
+brew "rumdl"
+brew "vale"
+brew "yamllint"
