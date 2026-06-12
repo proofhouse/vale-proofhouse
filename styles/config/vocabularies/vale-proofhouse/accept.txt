@@ -1,3 +1,4 @@
+[Aa]ctionlint
 [Aa]llowlist
 Brewfile
 [Cc][Ii]
@@ -10,6 +11,7 @@ Brewfile
 [Gg]itleaks
 gomodscan
 Justfile
+[Pp]odman
 [Pp]rek
 [Pp]roofhouse
 proselint

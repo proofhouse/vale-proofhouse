@@ -1,2 +1,13 @@
+AGENTMSG
+cocogitto
+mktemp
+orbstack
+osxkeychain
+pipefail
 prek
 proofhouse
+rhysd
+rumdl
+shellcheck
+tbhb
+worktrees
