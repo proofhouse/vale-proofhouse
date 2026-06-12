@@ -38,3 +38,6 @@ proofhouse.zip
 
 # macOS
 .DS_Store
+
+# APM dependencies
+apm_modules/
