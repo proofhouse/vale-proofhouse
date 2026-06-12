@@ -1,0 +1,16 @@
+# Review routing for vale-proofhouse. GitHub applies the last matching
+# rule, so the rules below override the default for the paths they name.
+# Owners are org teams (sole member @tbhb for now) created with push
+# access, the minimum GitHub requires for a team to count as a code
+# owner.
+
+# Default owner for everything.
+*           @proofhouse/maintainers
+
+# CI and supply-chain surface. The /.github/ rule covers renovate.json5
+# and every workflow, including the release pipeline.
+/.github/   @proofhouse/security
+
+# The style rules and the agent template are the package other repos
+# consume; keep them on the default review path explicitly.
+/styles/    @proofhouse/maintainers
