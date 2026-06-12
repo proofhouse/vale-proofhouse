@@ -11,4 +11,5 @@ proselint
 repo
 [Rr]uleset
 rumdl
+[Tt]oolchain
 [Ww]orktrees?
