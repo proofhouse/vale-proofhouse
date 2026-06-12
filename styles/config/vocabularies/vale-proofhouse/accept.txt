@@ -1,0 +1,8 @@
+[Cc][Ii]
+[Pp]rek
+[Pp]roofhouse
+[Rr]ebase
+[Rr]uleset
+[Ww]orktrees?
+proselint
+repo
