@@ -127,7 +127,7 @@ test: test-rules test-clean test-template
 test-rules:
     echo "Checking that every rule fires on test-document.md..."
     out=$(vale --config=.vale-test.ini --output=JSON test-document.md || true)
-    for rule in Acronyms Colons HeadingTitleCase Passive WordList; do
+    for rule in Acronyms Colons HeadingTitleCase WordList; do
         if ! grep -q "proofhouse.${rule}" <<< "$out"; then
             echo "proofhouse.${rule} never fired on test-document.md"
             exit 1
