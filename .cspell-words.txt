@@ -15,6 +15,7 @@ rhysd
 rumdl
 shellcheck
 tbhb
+tmpl
 Tricolon
 worktree
 worktrees
