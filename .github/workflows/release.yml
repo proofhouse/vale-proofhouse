@@ -1,0 +1,68 @@
+---
+# Release pipeline. Fires on every `v*` tag push: builds the proofhouse
+# Vale package zip through `just build-package` (the recipe stays the
+# single definition of the package layout), extracts the tag's section
+# from CHANGELOG.md as the release notes, and publishes the GitHub
+# release with the `gh` CLI under the workflow's own token — no
+# third-party release action. `contents: write` is scoped to the job;
+# the workflow default stays read-only.
+
+name: release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    name: release
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - name: Harden the runner
+        uses: step-security/harden-runner@9af89fc71515a100421586dfdb3dc9c984fbf411 # v2.19.4
+        with:
+          egress-policy: audit
+
+      - name: Checkout
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+
+      - name: Set up just
+        uses: proofhouse/github-actions/.github/actions/setup-just@c55eeb3115d95f6b8777538b4d6f49d48830e199 # v0.2.0
+
+      - name: Build the package
+        run: just build-package
+
+      - name: Extract release notes from CHANGELOG
+        run: |
+          VERSION="${GITHUB_REF#refs/tags/v}"
+          awk -v ver="$VERSION" '
+            $0 ~ "^## \\[" ver "\\]" {flag=1; next}
+            /^## \[/ {flag=0}
+            flag
+          ' CHANGELOG.md \
+            | sed -E '/^<!-- vale (off|on) -->$/d' \
+            | awk 'NF{found=1} found' \
+            > release-notes.md
+          if [ ! -s release-notes.md ]; then
+            echo "No CHANGELOG section found for v${VERSION}" >&2
+            exit 1
+          fi
+          echo "--- release-notes.md ---"
+          cat release-notes.md
+
+      - name: Create release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          gh release create "$TAG" proofhouse.zip \
+            --title "$TAG" \
+            --notes-file release-notes.md
