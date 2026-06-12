@@ -101,8 +101,12 @@ lint-spelling *args:
 # Lint prose in Markdown via vale (test fixtures trip rules on purpose).
 # Findings render through the agent template committed in this repo's
 # StylesPath, so fixes never need a second context-gathering pass.
+# The apm* entries cover the APM manifest, lockfile, and gitignored
+# package cache: none of them carry prose to lint, and vale 3.14.2
+# panics with "index out of range" when a directory scan picks up the
+# root-level YAML files.
 lint-prose *args:
-    vale --output=proofhouse-agent.tmpl --glob='!{LICENSE,CHANGELOG.md,test-*.md,styles/*,tmp/*,.claude/worktrees/*,COMMIT_AGENTMSG}' {{ if args == "" { "." } else { args } }}
+    vale --output=proofhouse-agent.tmpl --glob='!{LICENSE,CHANGELOG.md,test-*.md,styles/*,tmp/*,.claude/worktrees/*,COMMIT_AGENTMSG,apm.yml,apm.lock.yaml,apm_modules/*}' {{ if args == "" { "." } else { args } }}
 
 # Lint each rule file's own `message:` field with the prose styles, so
 # the package's diagnostics don't contain the patterns they flag. Uses the
