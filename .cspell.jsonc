@@ -7,6 +7,8 @@
     ".rumdl_cache/**/*",
     "LICENSE",
     "node_modules/**/*",
+    "pkg/**/*",
+    "proofhouse.zip",
     "styles/**/*",
     "tmp/**/*"
   ],
