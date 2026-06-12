@@ -13,3 +13,4 @@ repo
 rumdl
 [Tt]oolchain
 [Ww]orktrees?
+yamllint
