@@ -212,9 +212,13 @@ prek-install:
 
 # Generate CHANGELOG.md from Conventional Commit history. Lint the file
 # in place so the CHANGELOG.md per-file-ignores in .rumdl.toml apply
-# (rumdl matches those globs against on-disk paths, not stdin).
+# (rumdl matches those globs against on-disk paths, not stdin). cog 7
+# carries the tag's `v` prefix into version headings; strip it from the
+# heading text (the compare URL keeps the tag name) so the release-notes
+# extraction in release.yml and the update-release-notes recipe, both
+# matching `## [X.Y.Z]`, find the section.
 generate-changelog:
-    cog changelog | { echo "# Changelog"; cat; } > CHANGELOG.md
+    cog changelog | sed 's/^## \[v/## [/' | { echo "# Changelog"; cat; } > CHANGELOG.md
     rumdl check --fix CHANGELOG.md
 
 # Preview changelog entries since the last tagged release.
