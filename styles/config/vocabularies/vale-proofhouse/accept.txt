@@ -1,8 +1,9 @@
 [Cc][Ii]
+Justfile
 [Pp]rek
 [Pp]roofhouse
+proselint
 [Rr]ebase
+repo
 [Rr]uleset
 [Ww]orktrees?
-proselint
-repo

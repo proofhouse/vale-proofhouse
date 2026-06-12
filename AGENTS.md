@@ -10,4 +10,4 @@ The `commit-msg` stage runs four hooks from the shared [`pre-commit-hooks`](http
 
 ## Prose lint output
 
-When fixing vale findings, run `vale --output=proofhouse-agent.tmpl <paths>` instead of the default output. The template prints one self-contained line per finding — location, severity, rule, the exact matched text, and the replacement parameter when the rule defines one — so you can apply fixes without re-reading context through separate commands. Empty output means a clean run; the exit code carries the result.
+When fixing vale findings, run `vale --output=proofhouse-agent.tmpl <paths>` instead of the default output. The template prints one self-contained line per finding (location, severity, rule, the exact matched text, and the replacement parameter when the rule defines one) so you can apply fixes without re-reading context through separate commands. Empty output means a clean run, and the exit code carries the result.
