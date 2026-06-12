@@ -1,5 +1,8 @@
 [Aa]llowlist
 [Cc][Ii]
+[Cc]ocogitto
+[Cc]ommitlint
+[Cc]ommitter
 [Cc]onfig
 [Cc]spell
 gomodscan
