@@ -119,8 +119,59 @@ lint-commit-msg:
 
 # --- Test ---
 
-# Run the fixture suite; the rule and template checks arrive with the fixtures.
-test:
+# Run the fixture suite: rule trips, false positives, and template rendering.
+test: test-rules test-clean test-template
+
+# Assert every proofhouse rule fires at least once on test-document.md.
+[script]
+test-rules:
+    echo "Checking that every rule fires on test-document.md..."
+    out=$(vale --config=.vale-test.ini --output=JSON test-document.md || true)
+    for rule in Acronyms Colons HeadingTitleCase Passive WordList; do
+        if ! grep -q "proofhouse.${rule}" <<< "$out"; then
+            echo "proofhouse.${rule} never fired on test-document.md"
+            exit 1
+        fi
+    done
+    echo "Every rule fired."
+
+# Assert test-false-positives.md produces zero findings.
+[script]
+test-clean:
+    echo "Checking for false positives..."
+    out=$(vale --config=.vale-test.ini --output=JSON test-false-positives.md || true)
+    if [[ "$out" != "{}" ]]; then
+        echo "Expected zero findings on test-false-positives.md, got:"
+        echo "$out"
+        exit 1
+    fi
+    echo "Clean. No false positives."
+
+# Assert the agent template renders the header, a replacement, and the total.
+[script]
+test-template:
+    echo "Checking the agent template output..."
+    out=$(vale --config=.vale-test.ini --output=styles/config/templates/proofhouse-agent.tmpl test-document.md || true)
+    grep -q '^FILE: test-document.md$' <<< "$out" || { echo "missing FILE header"; exit 1; }
+    grep -q 'replace_with=' <<< "$out" || { echo "missing replace_with field"; exit 1; }
+    n=$(grep -cE '^[0-9]+:[0-9]+-[0-9]+ \[' <<< "$out")
+    grep -qF "TOTAL: ${n} finding(s)" <<< "$out" || { echo "TOTAL line disagrees with the ${n} finding lines"; exit 1; }
+    grep -qF "in 1 file(s)" <<< "$out" || { echo "missing file count"; exit 1; }
+    echo "Template output checks passed (${n} findings)."
+
+# --- Package ---
+
+# Build the wrapper-shape Vale package zip: the proofhouse rules plus the
+# agent template, explicitly excluding the project-local vocabularies and
+# views. pkg/ and proofhouse.zip stay gitignored.
+[script]
+build-package:
+    rm -rf pkg proofhouse.zip
+    mkdir -p pkg/proofhouse/styles/proofhouse pkg/proofhouse/styles/config/templates
+    cp styles/proofhouse/*.yml pkg/proofhouse/styles/proofhouse/
+    cp styles/config/templates/proofhouse-agent.tmpl pkg/proofhouse/styles/config/templates/
+    cd pkg && zip -r ../proofhouse.zip proofhouse
+    echo "Built proofhouse.zip"
 
 # --- Security ---
 

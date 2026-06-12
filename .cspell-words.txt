@@ -11,10 +11,12 @@ osxkeychain
 pipefail
 prek
 proofhouse
+RDL
 rhysd
 rumdl
 shellcheck
 tbhb
+TLA
 tmpl
 Tricolon
 worktree
