@@ -1,0 +1,21 @@
+{
+  "language": "en",
+  "ignorePaths": [
+    "**/*.d.ts",
+    "**/*.log",
+    ".claude/worktrees/**/*",
+    ".rumdl_cache/**/*",
+    "LICENSE",
+    "node_modules/**/*",
+    "styles/**/*",
+    "tmp/**/*"
+  ],
+  "dictionaryDefinitions": [
+    {
+      "name": "vale-proofhouse",
+      "path": "./.cspell-words.txt",
+      "addWords": true
+    }
+  ],
+  "dictionaries": ["vale-proofhouse"]
+}

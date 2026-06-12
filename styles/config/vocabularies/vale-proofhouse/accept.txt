@@ -1,4 +1,7 @@
+[Aa]llowlist
 [Cc][Ii]
+[Cc]onfig
+[Cc]spell
 Justfile
 [Pp]rek
 [Pp]roofhouse
