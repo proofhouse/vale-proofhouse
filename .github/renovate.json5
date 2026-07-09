@@ -1,24 +1,28 @@
 {
   $schema: "https://docs.renovatebot.com/renovate-schema.json",
 
-  // This repo's Renovate config is mostly shared org policy, pulled in from
-  // the two presets in proofhouse/github-actions:
-  //
-  //   - renovate-global-config.json5 via globalExtends — the global-only
-  //     identity, rate limits, and requireConfig (resolved at global-config
-  //     time, the only scope where those options take effect).
-  //   - renovate-config.json5 via extends — the repository-level rules plus
-  //     the Justfile and Vale custom managers shared by every repo. Those
-  //     managers already track this repo's .vale.ini packages and the
-  //     Docker image pins in the Justfile, so nothing stays inline here.
-  globalExtends: [
-    "github>proofhouse/github-actions//.github/renovate-global-config.json5",
-  ],
+  // The repository-level org policy comes from the shared preset in
+  // proofhouse/github-actions (renovate-config.json5 via extends): the
+  // shared rules plus the Justfile and Vale custom managers used by every
+  // repo. Those managers already track this repo's .vale.ini packages and
+  // the Docker image pins in the Justfile, so nothing stays inline here.
+  // extends resolves after platform initialization, with token auth.
   extends: [
     "github>proofhouse/github-actions//.github/renovate-config.json5",
   ],
 
-  // Single-repo scope. The one global-only option that can't move to the
-  // shared preset — it differs per repo.
+  // Global-only identity, rate limits, and requireConfig. These previously
+  // came from renovate-global-config.json5 via globalExtends, but Renovate
+  // resolves globalExtends before host rules are registered, so that preset
+  // fetch was always anonymous and intermittently hit GitHub's per-IP rate
+  // limit (config-presets-invalid). Inlining the resolved values removes
+  // the pre-auth fetch entirely.
+  requireConfig: "ignored",
+  username: "proofhouse-renovate[bot]",
+  gitAuthor: "proofhouse-renovate[bot] <289255489+proofhouse-renovate[bot]@users.noreply.github.com>",
+  prConcurrentLimit: 0,
+  prHourlyLimit: 0,
+
+  // Single-repo scope. Global-only and different per repo, so it stays here.
   repositories: ["proofhouse/vale-proofhouse"],
 }
