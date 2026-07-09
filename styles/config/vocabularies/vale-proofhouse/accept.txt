@@ -1,5 +1,6 @@
 [Aa]ctionlint
 [Aa]llowlist
+APM|apm
 Brewfile
 [Cc][Ii]
 [Cc]ocogitto
@@ -14,6 +15,8 @@ CodeQL
 [Gg]itleaks
 gomodscan
 Justfile
+[Ll]ockfiles?
+[Oo]rg(s|'s)?
 [Pp]odman
 [Pp]rek
 [Pp]roofhouse
