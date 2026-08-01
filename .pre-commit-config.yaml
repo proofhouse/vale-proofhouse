@@ -94,3 +94,15 @@ repos:
         language: system
         files: ^Justfile$
         pass_filenames: false
+
+      # editorconfig-checker. Scope lives in .editorconfig-checker.json,
+      # and the top-level exclude above already keeps the synced Vale
+      # style packages out, so run the recipe unfiltered rather than
+      # feeding it the staged paths: the checker walks the git-tracked tree itself
+      # and applying its own excludes to that walk is the tested path.
+      - id: editorconfig-checker
+        name: editorconfig-checker
+        entry: just lint-editorconfig
+        language: system
+        types: [text]
+        pass_filenames: false
