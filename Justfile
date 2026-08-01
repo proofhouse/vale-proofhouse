@@ -160,8 +160,10 @@ lint-spelling *args:
 # around a vale 3.14.2 panic ("index out of range") on a directory scan
 # that picked up the root-level YAML files. That panic is fixed as of
 # the pinned release, so only the first reason still holds.
+# The .claude/rules and .claude/skills trees arrive from the same APM
+# package, so an edit there is reverted by the next `apm install`.
 lint-prose *args:
-    vale --output=proofhouse-agent.tmpl --glob='!{LICENSE,CHANGELOG.md,test-*.md,styles/*,tmp/*,.claude/worktrees/*,COMMIT_AGENTMSG,apm.yml,apm.lock.yaml,apm_modules/*}' {{ if args == "" { "." } else { args } }}
+    vale --output=proofhouse-agent.tmpl --glob='!{LICENSE,CHANGELOG.md,test-*.md,styles/*,tmp/*,.claude/worktrees/*,COMMIT_AGENTMSG,apm.yml,apm.lock.yaml,apm_modules/*,.claude/rules/*,.claude/skills/*}' {{ if args == "" { "." } else { args } }}
 
 # Lint each rule file's own `message:` field with the prose styles, so
 # the package's diagnostics don't contain the patterns they flag. Uses the
