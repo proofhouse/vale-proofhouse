@@ -1,5 +1,5 @@
-set unstable := true
-set positional-arguments := true
+set unstable
+set positional-arguments
 
 # Run [script] recipes under bash; dash lacks [[ ]], <<<, and pipefail.
 
@@ -7,6 +7,12 @@ set script-interpreter := ['bash', '-eu']
 
 # Locate a Docker-compatible runtime; override with CONTAINER_RUNTIME.
 
+# The continuation lines of the `for` list below hang under the first
+# candidate path rather than on a two-space grid, which is what shell
+# style calls for and what `lint-editorconfig` would otherwise reject
+# under this file's indent_size = 2. Exempt just that span rather than
+# re-indent a block the sibling repos carry verbatim.
+# editorconfig-checker-disable
 container_runtime := env("CONTAINER_RUNTIME", `bash -c '
     docker_path=$(command -v docker 2>/dev/null || true)
     podman_path=$(command -v podman 2>/dev/null || true)
@@ -23,6 +29,8 @@ container_runtime := env("CONTAINER_RUNTIME", `bash -c '
     done
     echo docker
 '`)
+
+# editorconfig-checker-enable
 
 # Shared docker-run prefix. DOCKER_CONFIG points at a fresh empty dir so
 # docker skips the osxkeychain helper; PATH prepends the runtime's dir
@@ -109,6 +117,14 @@ format-config *args:
 format-toml:
     tombi format
 
+# In-place Justfile formatter — the fixer paired with `lint-just`'s --check gate.
+# `--fmt` is still an unstable just feature; this file's own `set unstable` already
+# unlocks it, but pass --unstable explicitly so the recipe keeps working if that
+# setting ever goes away. Takes no path args: --fmt only ever rewrites the justfile
+# just resolved for this invocation.
+format-just:
+    just --fmt --unstable
+
 # --- Fix ---
 
 # Apply rumdl's auto-fixable Markdown rules.
@@ -118,7 +134,7 @@ fix-markdown *args:
 # --- Lint ---
 
 # Run every linter over the source tree.
-lint: lint-yaml lint-markdown lint-config lint-spelling lint-prose lint-messages lint-toml
+lint: lint-yaml lint-markdown lint-config lint-spelling lint-prose lint-messages lint-toml lint-just lint-editorconfig
 
 # Lint YAML via yamllint (--strict; config in .yamllint.yaml).
 lint-yaml *args:
@@ -182,6 +198,29 @@ check-tombi-version:
     else
         echo "tombi ${local} matches the verified release"
     fi
+
+# Format-check this Justfile with just's own formatter, so the file that defines
+# every other gate is itself gated. --check reports the difference and exits
+# non-zero without touching the file; `just format-just` is the in-place fixer.
+# just prints the whole justfile as diff context rather than a minimal hunk, so a
+# failure here is long: run `just format-just` and read `git diff` instead.
+lint-just:
+    just --fmt --check --unstable
+
+# Enforce .editorconfig (charset, line endings, final newline, trailing whitespace,
+# indentation) with editorconfig-checker. Nothing else in the bar reads
+# .editorconfig, so without this the file is documentation for editors only. The
+# binary is spelled out in full: upstream's own Makefile also installs a short `ec`
+# alias, but the Homebrew formula builds only `editorconfig-checker`, and the
+# Brewfile is how this repo provisions the tool. With no path args the checker walks
+# the files git tracks, which already keeps it off the gitignored Vale style
+# packages; the remaining scope lives in .editorconfig-checker.json, whose Exclude
+# list also covers CHANGELOG.md — `cog changelog` regenerates that file wholesale,
+# and the vale hook and the prose recipes already skip it for the same reason.
+# Indent width is not turned off tree-wide: the one block that needs an exemption
+# (the container-runtime probe above) carries inline disable/enable markers.
+lint-editorconfig:
+    editorconfig-checker
 
 # Lint GitHub Actions workflows via actionlint (SHA-pinned Docker image).
 lint-workflows:

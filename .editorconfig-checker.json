@@ -1,0 +1,6 @@
+{
+  "Exclude": [
+    "^styles/(Google|write-good|proselint|ai-tells.*)/",
+    "^CHANGELOG\\.md$"
+  ]
+}
