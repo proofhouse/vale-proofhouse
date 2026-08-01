@@ -47,6 +47,14 @@ jobs:
       - name: Put Homebrew on the PATH
         run: echo "/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin" >> "$GITHUB_PATH"
 
+      # The image pins an older Homebrew and sets HOMEBREW_NO_AUTO_UPDATE,
+      # but `brew bundle` reads formula metadata from the JSON API, which
+      # serves current definitions. ca-certificates now declares a `run`
+      # install step that the pinned Homebrew cannot parse, failing every
+      # formula that depends on it. Update Homebrew itself first.
+      - name: Update Homebrew
+        run: brew update
+
       - name: Install Homebrew dependencies
         run: brew bundle install
 
@@ -76,6 +84,14 @@ jobs:
       # The runner image ships Homebrew but leaves its prefix off PATH.
       - name: Put Homebrew on the PATH
         run: echo "/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin" >> "$GITHUB_PATH"
+
+      # The image pins an older Homebrew and sets HOMEBREW_NO_AUTO_UPDATE,
+      # but `brew bundle` reads formula metadata from the JSON API, which
+      # serves current definitions. ca-certificates now declares a `run`
+      # install step that the pinned Homebrew cannot parse, failing every
+      # formula that depends on it. Update Homebrew itself first.
+      - name: Update Homebrew
+        run: brew update
 
       - name: Install Homebrew dependencies
         run: brew bundle install
