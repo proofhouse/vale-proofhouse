@@ -86,11 +86,12 @@ install-brew:
 install-tools:
     vale sync
 
-# Warn when the locally installed vale differs from the version CI pins.
 # Advisory rather than fatal: local vale comes from Homebrew and drifts
 # ahead on its own schedule, and that is fine so long as it stays
 # visible. CI is the authority, so a mismatch means local findings may
 # not match the gate.
+
+# Warn when the locally installed vale differs from the version CI pins.
 [script]
 check-vale-version:
     local=$(vale --version | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)
@@ -111,17 +112,22 @@ format-markdown *args:
 format-config *args:
     biome format --write {{ if args == "" { "." } else { args } }}
 
-# In-place TOML formatter (tombi 1.2.0) — the fixer paired with `lint-toml`'s --check
-# gate. Rewrites whitespace/style only; key and array order are preserved (schema-driven
-# reordering is disabled in tombi.toml). Excludes and lockfile skips come from tombi.toml.
+# The fixer paired with `lint-toml`'s --check gate. Rewrites
+# whitespace/style only; key and array order are preserved (schema-driven
+# reordering is disabled in tombi.toml). Excludes and lockfile skips come
+# from tombi.toml.
+
+# Format TOML in place (tombi 1.2.0).
 format-toml:
     tombi format
 
-# In-place Justfile formatter — the fixer paired with `lint-just`'s --check gate.
-# `--fmt` is still an unstable just feature; this file's own `set unstable` already
-# unlocks it, but pass --unstable explicitly so the recipe keeps working if that
-# setting ever goes away. Takes no path args: --fmt only ever rewrites the justfile
-# just resolved for this invocation.
+# The fixer paired with `lint-just`'s --check gate. `--fmt` is still an
+# unstable just feature; this file's own `set unstable` already unlocks
+# it, but pass --unstable explicitly so the recipe keeps working if that
+# setting ever goes away. Takes no path args: --fmt only ever rewrites
+# the justfile just resolved for this invocation.
+
+# Format this Justfile in place.
 format-just:
     just --fmt --unstable
 
@@ -152,7 +158,6 @@ lint-config *args:
 lint-spelling *args:
     cspell --config .cspell.jsonc --no-summary --no-progress --no-must-find-files --exclude COMMIT_AGENTMSG {{ if args == "" { "." } else { args } }}
 
-# Lint prose in Markdown via vale (test fixtures trip rules on purpose).
 # Findings render through the agent template committed in this repo's
 # StylesPath, so fixes never need a second context-gathering pass.
 # The apm* entries cover the APM manifest, lockfile, and gitignored
@@ -162,35 +167,42 @@ lint-spelling *args:
 # the pinned release, so only the first reason still holds.
 # The .claude/rules and .claude/skills trees arrive from the same APM
 # package, so an edit there is reverted by the next `apm install`.
+
+# Lint prose in Markdown via vale (test fixtures trip rules on purpose).
 lint-prose *args:
     vale --output=proofhouse-agent.tmpl --glob='!{LICENSE,CHANGELOG.md,test-*.md,styles/*,tmp/*,.claude/worktrees/*,COMMIT_AGENTMSG,apm.yml,apm.lock.yaml,apm_modules/*,.claude/rules/*,.claude/skills/*}' {{ if args == "" { "." } else { args } }}
 
-# Lint each rule file's own `message:` field with the prose styles, so
-# the package's diagnostics don't contain the patterns they flag. Uses the
-# RuleMessage View (styles/config/views/RuleMessage.yml) to select the field.
+# The package's diagnostics don't contain the patterns they flag. Uses
+# the RuleMessage View (styles/config/views/RuleMessage.yml) to select
+# the field.
+
+# Lint each rule file's own `message:` field with the prose styles.
 lint-messages:
     vale --config=.vale-messages.ini --output=proofhouse-agent.tmpl styles/proofhouse
 
-# tombi is the org TOML gate (tombi 1.2.0): it lint-checks every tracked *.toml.
-# Cargo.toml/pyproject.toml validate offline against embedded SchemaStore schemas;
-# cog.toml, .rumdl.toml, REUSE.toml, deny.toml et al. get syntax + style checks. We run
-# the format gate in --check --diff mode here as well, so an unformatted TOML file fails
-# `just lint` without being rewritten (`just format-toml` is the in-place fixer).
-# --offline keeps CI hermetic against SchemaStore; --error-on-warnings promotes warnings
-# to hard failures (matching the org -D-warnings / --max-warnings=0 posture). Scope
-# (include/exclude, lockfile skips, schema.strict=false) lives in tombi.toml, so this
-# recipe passes NO path args — tombi walks the tree per that config. This deliberately
-# departs from the sibling `*args`-default-`.` idiom because tombi centralizes scoping in
+# Cargo.toml/pyproject.toml validate offline against embedded SchemaStore
+# schemas; cog.toml, .rumdl.toml, REUSE.toml, deny.toml et al. get syntax
+# + style checks. We run the format gate in --check --diff mode here as
+# well, so an unformatted TOML file fails `just lint` without being
+# rewritten (`just format-toml` is the in-place fixer). --offline keeps CI
+# hermetic against SchemaStore; --error-on-warnings promotes warnings to
+# hard failures (matching the org -D-warnings / --max-warnings=0 posture).
+# Scope (include/exclude, lockfile skips, schema.strict=false) lives in
+# tombi.toml, so this recipe passes NO path args — tombi walks the tree
+# per that config. This deliberately departs from the sibling
+# `*args`-default-`.` idiom because tombi centralizes scoping in
 # tombi.toml rather than on the CLI, keeping excludes in one place.
+
+# Lint-check every tracked *.toml with tombi 1.2.0, the org TOML gate.
 lint-toml:
     tombi format --check --diff
     tombi lint --offline --error-on-warnings
 
-# Warn when the locally installed tombi differs from the verified
-# release. Advisory rather than fatal: tombi comes from Homebrew and
-# moves on its own schedule, and that is fine so long as it stays
-# visible rather than silently reformatting a file the gate then
-# rejects.
+# Advisory rather than fatal: tombi comes from Homebrew and moves on its
+# own schedule, and that is fine so long as it stays visible rather than
+# silently reformatting a file the gate then rejects.
+
+# Warn when the local tombi differs from the verified release.
 [script]
 check-tombi-version:
     local=$(tombi --version | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)
@@ -201,26 +213,31 @@ check-tombi-version:
         echo "tombi ${local} matches the verified release"
     fi
 
-# Format-check this Justfile with just's own formatter, so the file that defines
-# every other gate is itself gated. --check reports the difference and exits
-# non-zero without touching the file; `just format-just` is the in-place fixer.
-# just prints the whole justfile as diff context rather than a minimal hunk, so a
-# failure here is long: run `just format-just` and read `git diff` instead.
+# The file that defines every other gate is then itself gated. --check
+# reports the difference and exits non-zero without touching the file;
+# `just format-just` is the in-place fixer. just prints the whole
+# justfile as diff context rather than a minimal hunk, so a failure here
+# is long: run `just format-just` and read `git diff` instead.
+
+# Format-check this Justfile with just's own formatter.
 lint-just:
     just --fmt --check --unstable
 
-# Enforce .editorconfig (charset, line endings, final newline, trailing whitespace,
-# indentation) with editorconfig-checker. Nothing else in the bar reads
-# .editorconfig, so without this the file is documentation for editors only. The
-# binary is spelled out in full: upstream's own Makefile also installs a short `ec`
-# alias, but the Homebrew formula builds only `editorconfig-checker`, and the
-# Brewfile is how this repo provisions the tool. With no path args the checker walks
-# the files git tracks, which already keeps it off the gitignored Vale style
-# packages; the remaining scope lives in .editorconfig-checker.json, whose Exclude
-# list also covers CHANGELOG.md — `cog changelog` regenerates that file wholesale,
-# and the vale hook and the prose recipes already skip it for the same reason.
-# Indent width is not turned off tree-wide: the one block that needs an exemption
-# (the container-runtime probe above) carries inline disable/enable markers.
+# Covered: charset, line endings, final newline, trailing whitespace,
+# indentation. Nothing else in the bar reads .editorconfig, so without
+# this the file is documentation for editors only. The binary is spelled
+# out in full: upstream's own Makefile also installs a short `ec` alias,
+# but the Homebrew formula builds only `editorconfig-checker`, and the
+# Brewfile is how this repo provisions the tool. With no path args the
+# checker walks the files git tracks, which already keeps it off the
+# gitignored Vale style packages; the remaining scope lives in
+# .editorconfig-checker.json, whose Exclude list also covers CHANGELOG.md
+# — `cog changelog` regenerates that file wholesale, and the vale hook
+# and the prose recipes already skip it for the same reason. Indent width
+# is not turned off tree-wide: the one block that needs an exemption (the
+# container-runtime probe above) carries inline disable/enable markers.
+
+# Enforce .editorconfig with editorconfig-checker.
 lint-editorconfig:
     editorconfig-checker
 
@@ -228,8 +245,9 @@ lint-editorconfig:
 lint-workflows:
     {{ actionlint }}
 
-# Preview the four commit-msg gates against the COMMIT_AGENTMSG draft.
 # prek needs .pre-commit-config.yaml staged to run.
+
+# Preview the four commit-msg gates against the COMMIT_AGENTMSG draft.
 lint-commit-msg:
     prek run --stage commit-msg --commit-msg-filename COMMIT_AGENTMSG
 
@@ -277,9 +295,11 @@ test-template:
 
 # --- Package ---
 
-# Build the wrapper-shape Vale package zip: the proofhouse rules plus the
-# agent template, explicitly excluding the project-local vocabularies and
-# views. pkg/ and proofhouse.zip stay gitignored.
+# The zip carries the proofhouse rules plus the agent template, and
+# explicitly excludes the project-local vocabularies and views. pkg/ and
+# proofhouse.zip stay gitignored.
+
+# Build the wrapper-shape Vale package zip.
 [script]
 build-package:
     rm -rf pkg proofhouse.zip
@@ -324,13 +344,14 @@ prek-all:
 prek-install:
     prek install -t commit-msg -t pre-commit -t pre-push
 
-# Generate CHANGELOG.md from Conventional Commit history. Lint the file
-# in place so the CHANGELOG.md per-file-ignores in .rumdl.toml apply
-# (rumdl matches those globs against on-disk paths, not stdin). cog 7
-# carries the tag's `v` prefix into version headings; strip it from the
-# heading text (the compare URL keeps the tag name) so the release-notes
-# extraction in release.yml and the update-release-notes recipe, both
-# matching `## [X.Y.Z]`, find the section.
+# Lint the file in place so the CHANGELOG.md per-file-ignores in
+# .rumdl.toml apply (rumdl matches those globs against on-disk paths, not
+# stdin). cog 7 carries the tag's `v` prefix into version headings; strip
+# it from the heading text (the compare URL keeps the tag name) so the
+# release-notes extraction in release.yml and the update-release-notes
+# recipe, both matching `## [X.Y.Z]`, find the section.
+
+# Generate CHANGELOG.md from Conventional Commit history.
 generate-changelog:
     cog changelog | sed 's/^## \[v/## [/' | { echo "# Changelog"; cat; } > CHANGELOG.md
     rumdl check --fix CHANGELOG.md
@@ -339,9 +360,11 @@ generate-changelog:
 preview-changelog:
     cog changelog --at $(git describe --tags)..HEAD -t full_hash | rumdl check -d MD041 --fix --stdin
 
-# Generate release notes for a version (or HEAD if none given). MD041 is
-# disabled for the heading-less fragment; without --isolated, MD013 stays
-# off via .rumdl.toml so the full commit hashes are never wrapped.
+# MD041 is disabled for the heading-less fragment; without --isolated,
+# MD013 stays off via .rumdl.toml so the full commit hashes are never
+# wrapped.
+
+# Generate release notes for a version (or HEAD if none given).
 [script]
 generate-release-notes version="":
     v=$([[ -n "{{ version }}" ]] && echo "v{{ version }}" || echo "..$(git rev-parse HEAD)")
