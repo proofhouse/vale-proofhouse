@@ -6,12 +6,14 @@ dasel
 EDITMSG
 hardwrap
 linuxbrew
+lockfiles
 mktemp
 orbstack
 osxkeychain
 pipefail
 prek
 proofhouse
+pyproject
 RDL
 rhysd
 rumdl
@@ -20,7 +22,9 @@ shellcheck
 tbhb
 TLA
 tmpl
+tombi
 Tricolon
+venv
 worktree
 worktrees
 yamllintignore
