@@ -1,5 +1,5 @@
-set unstable := true
-set positional-arguments := true
+set unstable
+set positional-arguments
 
 # Run [script] recipes under bash; dash lacks [[ ]], <<<, and pipefail.
 
@@ -109,6 +109,14 @@ format-config *args:
 format-toml:
     tombi format
 
+# In-place Justfile formatter — the fixer paired with `lint-just`'s --check gate.
+# `--fmt` is still an unstable just feature; this file's own `set unstable` already
+# unlocks it, but pass --unstable explicitly so the recipe keeps working if that
+# setting ever goes away. Takes no path args: --fmt only ever rewrites the justfile
+# just resolved for this invocation.
+format-just:
+    just --fmt --unstable
+
 # --- Fix ---
 
 # Apply rumdl's auto-fixable Markdown rules.
@@ -118,7 +126,7 @@ fix-markdown *args:
 # --- Lint ---
 
 # Run every linter over the source tree.
-lint: lint-yaml lint-markdown lint-config lint-spelling lint-prose lint-messages lint-toml
+lint: lint-yaml lint-markdown lint-config lint-spelling lint-prose lint-messages lint-toml lint-just
 
 # Lint YAML via yamllint (--strict; config in .yamllint.yaml).
 lint-yaml *args:
@@ -182,6 +190,14 @@ check-tombi-version:
     else
         echo "tombi ${local} matches the verified release"
     fi
+
+# Format-check this Justfile with just's own formatter, so the file that defines
+# every other gate is itself gated. --check reports the difference and exits
+# non-zero without touching the file; `just format-just` is the in-place fixer.
+# just prints the whole justfile as diff context rather than a minimal hunk, so a
+# failure here is long: run `just format-just` and read `git diff` instead.
+lint-just:
+    just --fmt --check --unstable
 
 # Lint GitHub Actions workflows via actionlint (SHA-pinned Docker image).
 lint-workflows:
