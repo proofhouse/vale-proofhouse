@@ -47,6 +47,13 @@ jobs:
       - name: Put Homebrew on the PATH
         run: echo "/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin" >> "$GITHUB_PATH"
 
+      # vale comes from the pinned composite rather than the Brewfile, so
+      # the prose gates run a known binary instead of whatever Homebrew
+      # serves that day. It lands on PATH ahead of Homebrew's prefix, so
+      # the Brewfile copy never shadows it.
+      - name: Set up vale
+        uses: proofhouse/github-actions/.github/actions/setup-vale@e95a868f30a34989191902e274e131474f06429f # v0.3.0
+
       # The image pins an older Homebrew and sets HOMEBREW_NO_AUTO_UPDATE,
       # but `brew bundle` reads formula metadata from the JSON API, which
       # serves current definitions. ca-certificates now declares a `run`
@@ -84,6 +91,13 @@ jobs:
       # The runner image ships Homebrew but leaves its prefix off PATH.
       - name: Put Homebrew on the PATH
         run: echo "/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin" >> "$GITHUB_PATH"
+
+      # vale comes from the pinned composite rather than the Brewfile, so
+      # the prose gates run a known binary instead of whatever Homebrew
+      # serves that day. It lands on PATH ahead of Homebrew's prefix, so
+      # the Brewfile copy never shadows it.
+      - name: Set up vale
+        uses: proofhouse/github-actions/.github/actions/setup-vale@e95a868f30a34989191902e274e131474f06429f # v0.3.0
 
       # The image pins an older Homebrew and sets HOMEBREW_NO_AUTO_UPDATE,
       # but `brew bundle` reads formula metadata from the JSON API, which
