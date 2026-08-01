@@ -26,6 +26,7 @@ proselint
 repo
 [Rr]uleset
 rumdl
+[Tt]ombi
 [Tt]oolchain
 [Vv]alidator[s]?
 [Ww]orktrees?

@@ -71,6 +71,12 @@ format-markdown *args:
 format-config *args:
     biome format --write {{ if args == "" { "." } else { args } }}
 
+# In-place TOML formatter (tombi 1.2.0) — the fixer paired with `lint-toml`'s --check
+# gate. Rewrites whitespace/style only; key and array order are preserved (schema-driven
+# reordering is disabled in tombi.toml). Excludes and lockfile skips come from tombi.toml.
+format-toml:
+    tombi format
+
 # --- Fix ---
 
 # Apply rumdl's auto-fixable Markdown rules.
@@ -80,7 +86,7 @@ fix-markdown *args:
 # --- Lint ---
 
 # Run every linter over the source tree.
-lint: lint-yaml lint-markdown lint-config lint-spelling lint-prose lint-messages
+lint: lint-yaml lint-markdown lint-config lint-spelling lint-prose lint-messages lint-toml
 
 # Lint YAML via yamllint (--strict; config in .yamllint.yaml).
 lint-yaml *args:
@@ -113,6 +119,21 @@ lint-prose *args:
 # RuleMessage View (styles/config/views/RuleMessage.yml) to select the field.
 lint-messages:
     vale --config=.vale-messages.ini --output=proofhouse-agent.tmpl styles/proofhouse
+
+# tombi is the org TOML gate (tombi 1.2.0): it lint-checks every tracked *.toml.
+# Cargo.toml/pyproject.toml validate offline against embedded SchemaStore schemas;
+# cog.toml, .rumdl.toml, REUSE.toml, deny.toml et al. get syntax + style checks. We run
+# the format gate in --check --diff mode here as well, so an unformatted TOML file fails
+# `just lint` without being rewritten (`just format-toml` is the in-place fixer).
+# --offline keeps CI hermetic against SchemaStore; --error-on-warnings promotes warnings
+# to hard failures (matching the org -D-warnings / --max-warnings=0 posture). Scope
+# (include/exclude, lockfile skips, schema.strict=false) lives in tombi.toml, so this
+# recipe passes NO path args — tombi walks the tree per that config. This deliberately
+# departs from the sibling `*args`-default-`.` idiom because tombi centralizes scoping in
+# tombi.toml rather than on the CLI, keeping excludes in one place.
+lint-toml:
+    tombi format --check --diff
+    tombi lint --offline --error-on-warnings
 
 # Lint GitHub Actions workflows via actionlint (SHA-pinned Docker image).
 lint-workflows:
