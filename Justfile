@@ -44,7 +44,7 @@ docker_run := 'DOCKER_CONFIG="$(mktemp -d)" PATH="$(dirname ' + container_runtim
 
 # renovate: datasource=github-releases depName=vale-cli/vale
 
-vale_version := "3.17.0"
+vale_version := "3.19.0"
 
 # The tombi release this repo's config and committed formatting are
 # verified against. tombi is brew-installed, so `check-tombi-version`
